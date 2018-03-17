@@ -24,8 +24,9 @@ class ZohoMethods
         $result = ZohoConnector::PostRequesting($authtoken, $url, $data);
         $jsonerror = json_decode($result,true);
         if ($jsonerror['status'] === "error"){
-            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            $fp = fopen(dirname(__FILE__) .'/ErrorsLog.txt',"a");
             fwrite($fp,"Error: ".$result."\n");
+            fclose($fp);
         } else {
             return $result;
         }
@@ -52,8 +53,9 @@ class ZohoMethods
         $result = ZohoConnector::PutRequesting($authtoken, $url, $data);
         $jsonerror = json_decode($result,true);
         if ($jsonerror['status'] === "error"){
-            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            $fp = fopen(dirname(__FILE__) .'/ErrorsLog.txt',"a");
             fwrite($fp,"Error: ".$result."\n");
+            fclose($fp);
         } else {
             return $result;
         }
@@ -73,8 +75,9 @@ class ZohoMethods
         $result = ZohoConnector::DeleteRequesting($authtoken, $url);
         $jsonerror = json_decode($result,true);
         if ($jsonerror['status'] === "error"){
-            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            $fp = fopen(dirname(__FILE__) .'/ErrorsLog.txt',"a");
             fwrite($fp,"Error: ".$result."\n");
+            fclose($fp);
         } else {
             return $result;
         }
@@ -94,8 +97,9 @@ class ZohoMethods
         $result = ZohoConnector::GetRequesting($authtoken, $url);
         $jsonerror = json_decode($result,true);
         if ($jsonerror['status'] === "error"){
-            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            $fp = fopen(dirname(__FILE__) .'/ErrorsLog.txt',"a");
             fwrite($fp,"Error: ".$result."\n");
+            fclose($fp);
         } else {
             return $result;
         }
@@ -115,8 +119,9 @@ class ZohoMethods
         $result = ZohoConnector::GetRequesting($authtoken, $url);
         $jsonerror = json_decode($result,true);
         if ($jsonerror['status'] === "error"){
-            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            $fp = fopen(dirname(__FILE__) .'/ErrorsLog.txt',"a");
             fwrite($fp,"Error: ".$result."\n");
+            fclose($fp);
         } else {
             return $result;
         }
@@ -137,8 +142,9 @@ class ZohoMethods
         $result = ZohoConnector::GetRequesting($authtoken, $url);
         $jsonerror = json_decode($result,true);
         if ($jsonerror['status'] === "error"){
-            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            $fp = fopen(dirname(__FILE__) .'/ErrorsLog.txt',"a");
             fwrite($fp,"Error: ".$result."\n");
+            fclose($fp);
         } else {
             return $result;
         }
@@ -165,10 +171,34 @@ class ZohoMethods
         $result = ZohoConnector::PutRequesting($authtoken, $url, $data);
         $jsonerror = json_decode($result,true);
         if ($jsonerror['status'] === "error"){
-            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            $fp = fopen(dirname(__FILE__) .'/ErrorsLog.txt',"a");
             fwrite($fp,"Error: ".$result."\n");
+            fclose($fp);
         } else {
             return $result;
+        }
+        return null;
+    }
+
+    /**
+     * генерация AuthToken доступа в ZohoCRM
+     *
+     * @param string $email email аккаунта юзера
+     * @param string $password пароль от аккаунта юзера
+     * @param string $appname имя приложения для которого будет создаваться токен
+     */
+    public static function GenerateAuthToken ($email,$password,$appname){
+        $url = "https://accounts.zoho.com/apiauthtoken/nb/create?SCOPE=ZohoCRM/crmapi&EMAIL_ID=".$email."&PASSWORD=".$password."&DISPLAY_NAME=".$appname;
+        $result = ZohoConnector::GetRequesting('',$url);
+        if (substr_count($result,'FALSE')>0){
+            $fp = fopen(dirname(__FILE__) .'/ErrorsLog.txt',"a");
+            fwrite($fp,"Error: ".$result."\n");
+            fclose($fp);
+        } else {
+            $fptoken = fopen(dirname(__FILE__) .'/AuthTokenInfo.txt',"w");
+            fwrite($fptoken,$result);
+            fclose($fptoken);
+            return "Authtoken generated";
         }
         return null;
     }
