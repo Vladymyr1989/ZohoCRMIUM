@@ -12,7 +12,6 @@ class ZohoMethods
      * @param string $authtoken токен авторизации
      * @param string $modulename API имя модуля
      * @param string $jsondata JSON заполненый {поле : изначение,...} создаваемой сущности
-     * @return mixed
      */
     public static function CreateRecord($authtoken, $modulename, $jsondata)
     {
@@ -23,7 +22,14 @@ class ZohoMethods
             ']
                  }';
         $result = ZohoConnector::PostRequesting($authtoken, $url, $data);
-        return $result;
+        $jsonerror = json_decode($result,true);
+        if ($jsonerror['status'] === "error"){
+            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            fwrite($fp,"Error: ".$result."\n");
+        } else {
+            return $result;
+        }
+        return null;
     }
 
     /**
@@ -34,7 +40,6 @@ class ZohoMethods
      * @param string $modulename API имя модуля
      * @param string $id идентификатор сущности
      * @param string $jsondata JSON заполненый {поле : изначение,...} обновляемой сущности
-     * @return mixed
      */
     public static function UpdateRecord($authtoken, $modulename, $id, $jsondata)
     {
@@ -45,7 +50,14 @@ class ZohoMethods
             ']
                  }';
         $result = ZohoConnector::PutRequesting($authtoken, $url, $data);
-        return $result;
+        $jsonerror = json_decode($result,true);
+        if ($jsonerror['status'] === "error"){
+            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            fwrite($fp,"Error: ".$result."\n");
+        } else {
+            return $result;
+        }
+        return null;
     }
 
     /**
@@ -54,13 +66,19 @@ class ZohoMethods
      * @param string $authtoken токен авторизации
      * @param string $modulename API имя модуля
      * @param string $id идентификатор сущности
-     * @return mixed
      */
     public static function DeleteRecord($authtoken, $modulename, $id)
     {
         $url = "https://www.zohoapis.com/crm/v2/" . $modulename . "/" . $id;
         $result = ZohoConnector::DeleteRequesting($authtoken, $url);
-        return $result;
+        $jsonerror = json_decode($result,true);
+        if ($jsonerror['status'] === "error"){
+            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            fwrite($fp,"Error: ".$result."\n");
+        } else {
+            return $result;
+        }
+        return null;
     }
 
     /**
@@ -69,13 +87,40 @@ class ZohoMethods
      * @param string $authtoken токен авторизации
      * @param string $modulename API имя модуля
      * @param string $id идентификатор сущности
-     * @return mixed
      */
     public static function GetRecord($authtoken, $modulename, $id)
     {
         $url = "https://www.zohoapis.com/crm/v2/" . $modulename . "/" . $id;
         $result = ZohoConnector::GetRequesting($authtoken, $url);
-        return $result;
+        $jsonerror = json_decode($result,true);
+        if ($jsonerror['status'] === "error"){
+            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            fwrite($fp,"Error: ".$result."\n");
+        } else {
+            return $result;
+        }
+        return null;
+    }
+
+    /**
+     * получаем сущности из ZohoCRM по указаному критерию, возвращает JSON объект
+     *
+     * @param string $authtoken токен авторизации
+     * @param string $modulename API имя модуля
+     * @param string $criteria критерий поиска "(apifieldname:starts_with|equals:value)", допускается несколько критериев лог.оп. - AND, OR
+     */
+    public static function SearchRecordByCriteria($authtoken, $modulename, $criteria)
+    {
+        $url = "https://www.zohoapis.com/crm/v2/" . $modulename . "/search?criteria=" . $criteria;
+        $result = ZohoConnector::GetRequesting($authtoken, $url);
+        $jsonerror = json_decode($result,true);
+        if ($jsonerror['status'] === "error"){
+            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            fwrite($fp,"Error: ".$result."\n");
+        } else {
+            return $result;
+        }
+        return null;
     }
 }
 

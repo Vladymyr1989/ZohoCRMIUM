@@ -11,7 +11,6 @@ class ZohoConnector
      * @param string $authtoken токен авторизации
      * @param string $url url запроса
      * @param string $data JSON представления сущности
-     * @return mixed
      */
     public static function PostRequesting($authtoken, $url, $data)
     {
@@ -39,7 +38,6 @@ class ZohoConnector
      *
      * @param string $authtoken токен авторизации
      * @param string $url url запроса
-     * @return mixed
      */
     public static function GetRequesting($authtoken, $url)
     {
@@ -66,7 +64,6 @@ class ZohoConnector
      *
      * @param string $authtoken токен авторизации
      * @param string $url url запроса
-     * @return mixed
      */
     public static function DeleteRequesting($authtoken, $url)
     {
@@ -94,7 +91,6 @@ class ZohoConnector
      * @param string $authtoken токен авторизации
      * @param string $url url запроса
      * @param string $data JSON представления сущности
-     * @return mixed
      */
     public static function PutRequesting($authtoken, $url, $data)
     {
