@@ -7,7 +7,7 @@ require_once(dirname(__FILE__) . '/ZohoConnector.php');
 class ZohoMethods
 {
     /**
-     * создает сущность в ZohoCRM в единственном числе, возвращает ответ сервера
+     * создает сущность в ZohoCRM в единственном числе
      *
      * @param string $authtoken токен авторизации
      * @param string $modulename API имя модуля
@@ -34,7 +34,7 @@ class ZohoMethods
 
     /**
      *
-     * обновляет сущность в ZohoCRM в единственном числе по идентификатору, возвращает ответ сервера
+     * обновляет сущность в ZohoCRM в единственном числе по идентификатору
      *
      * @param string $authtoken токен авторизации
      * @param string $modulename API имя модуля
@@ -61,7 +61,7 @@ class ZohoMethods
     }
 
     /**
-     * удаляем сущность в ZohoCRM в единственном числе по идентификатору, возвращает ответ сервера
+     * удаляем сущность в ZohoCRM в единственном числе по идентификатору
      *
      * @param string $authtoken токен авторизации
      * @param string $modulename API имя модуля
@@ -113,6 +113,56 @@ class ZohoMethods
     {
         $url = "https://www.zohoapis.com/crm/v2/" . $modulename . "/search?criteria=" . $criteria;
         $result = ZohoConnector::GetRequesting($authtoken, $url);
+        $jsonerror = json_decode($result,true);
+        if ($jsonerror['status'] === "error"){
+            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            fwrite($fp,"Error: ".$result."\n");
+        } else {
+            return $result;
+        }
+        return null;
+    }
+
+    /**
+     * получаем связанные модули у сущности из ZohoCRM, возвращает JSON объект
+     *
+     * @param string $authtoken токен авторизации
+     * @param string $modulename API имя модуля
+     * @param string $id идентификатор сущности
+     * @param string $relaterecordname API имя связанного модуля
+     */
+    public static function GetRelatedRecords($authtoken, $modulename, $relaterecordname, $id)
+    {
+        $url = "https://www.zohoapis.com/crm/v2/" . $modulename . "/" . $id."/".$relaterecordname;
+        $result = ZohoConnector::GetRequesting($authtoken, $url);
+        $jsonerror = json_decode($result,true);
+        if ($jsonerror['status'] === "error"){
+            $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
+            fwrite($fp,"Error: ".$result."\n");
+        } else {
+            return $result;
+        }
+        return null;
+    }
+    /**
+     * обновляем связанный модуль у сущности из ZohoCRM
+     *
+     * @param string $authtoken токен авторизации
+     * @param string $modulename API имя модуля
+     * @param string $moduleid идентификатор сущности
+     * @param string $relaterecordname API имя связанного модуля
+     * @param string $relatedrecordid идентификатор связного списка
+     * @param string $jsondata JSON заполненый {поле : изначение,...} обновляемого связного модуля
+     */
+    public static function UpdateRelatedRecord($authtoken, $modulename, $moduleid, $relaterecordname, $relatedrecordid, $jsondata)
+    {
+        $url = "https://www.zohoapis.com/crm/v2/" . $modulename . "/" . $moduleid."/".$relaterecordname."/".$relatedrecordid;
+        $data = '{
+	                "data": ['
+            . $jsondata .
+            ']
+                 }';
+        $result = ZohoConnector::PutRequesting($authtoken, $url, $data);
         $jsonerror = json_decode($result,true);
         if ($jsonerror['status'] === "error"){
             $fp = fopen(dirname(__FILE__) .'/ErrorLog.txt',"a");
