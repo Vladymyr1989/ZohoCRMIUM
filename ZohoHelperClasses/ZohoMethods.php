@@ -62,5 +62,20 @@ class ZohoMethods
         $result = ZohoConnector::DeleteRequesting($authtoken, $url);
         return $result;
     }
+
+    /**
+     * получаем сущность из ZohoCRM в единственном числе по идентификатору, возвращает JSON объект
+     *
+     * @param string $authtoken токен авторизации
+     * @param string $modulename API имя модуля
+     * @param string $id идентификатор сущности
+     * @return mixed
+     */
+    public static function GetRecord($authtoken, $modulename, $id)
+    {
+        $url = "https://www.zohoapis.com/crm/v2/" . $modulename . "/" . $id;
+        $result = ZohoConnector::GetRequesting($authtoken, $url);
+        return $result;
+    }
 }
 
