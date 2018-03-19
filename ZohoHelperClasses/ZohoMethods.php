@@ -101,13 +101,17 @@ class ZohoMethods
             fwrite($fp,"Error: ".$result."\n");
             fclose($fp);
         } else {
-            return $result;
+            $jsonstr = json_decode($result);
+            $jsonelem = $jsonstr->data;
+            $jsonenc = json_encode($jsonelem);
+            $jsonobj = substr($jsonenc,1,strlen($jsonenc)-2);
+            return $jsonobj;
         }
         return null;
     }
 
     /**
-     * получаем сущности из ZohoCRM по указаному критерию, возвращает JSON объект
+     * получаем сущности из ZohoCRM по указаному критерию, возвращает массив JSON объектов
      *
      * @param string $authtoken токен авторизации
      * @param string $modulename API имя модуля
@@ -123,7 +127,13 @@ class ZohoMethods
             fwrite($fp,"Error: ".$result."\n");
             fclose($fp);
         } else {
-            return $result;
+            $jsonstr = json_decode($result);
+            $jsonelem = $jsonstr->data;
+            $objlist = array();
+            foreach ($jsonelem as $key){
+                $objlist[] = json_encode($key);
+            }
+            return $objlist;
         }
         return null;
     }
@@ -146,7 +156,11 @@ class ZohoMethods
             fwrite($fp,"Error: ".$result."\n");
             fclose($fp);
         } else {
-            return $result;
+            $jsonstr = json_decode($result);
+            $jsonelem = $jsonstr->data;
+            $jsonenc = json_encode($jsonelem);
+            $jsonobj = substr($jsonenc,1,strlen($jsonenc)-2);
+            return $jsonobj;
         }
         return null;
     }
@@ -201,6 +215,22 @@ class ZohoMethods
             return "Authtoken generated";
         }
         return null;
+    }
+
+    /**
+     * Получает значение поля, если поле это лукап получаем идентификатор вложенного поля
+     *
+     * @param string $jsonobj JSON объект сущности
+     * @param string $valueApiname API имя поля
+     */
+    public static function GetFieldValue ($jsonobj,$valueApiname){
+        $jsonobjDec = json_decode($jsonobj,true);
+        if (is_array($jsonobjDec[$valueApiname])){
+            $inneronj = $jsonobjDec[$valueApiname];
+            return $inneronj['id'];
+        } else {
+            return $jsonobjDec[$valueApiname];
+        }
     }
 }
 
