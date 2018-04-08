@@ -108,7 +108,8 @@ class ZohoMethods
      */
     public static function SearchRecordByCriteria($modulename, $criteria)
     {
-        $url = "https://www.zohoapis.com/crm/v2/" . $modulename . "/search?criteria=" . $criteria;
+        $encriteria = urlencode($criteria);
+        $url = "https://www.zohoapis.com/crm/v2/" . $modulename . "/search?criteria=" . $encriteria;
         $result = ZohoConnector::Requesting($url, '', 'GET');
         if (isset($result)) {
             $jsonerror = json_decode($result, true);
@@ -190,8 +191,8 @@ class ZohoMethods
     {
         $jsonobjDec = json_decode($jsonobj, true);
         if (is_array($jsonobjDec[$valueApiname])) {
-            $inneronj = $jsonobjDec[$valueApiname];
-            return $inneronj['id'];
+            $innerobj = $jsonobjDec[$valueApiname];
+            return $innerobj['id'];
         } else {
             return $jsonobjDec[$valueApiname];
         }
@@ -219,7 +220,7 @@ class ZohoMethods
                     return $result;
                 }
             } else {
-                $data = '{"data":[{' . $valueApiname . ':' . $value . '}],"trigger": ['.$wfTriger.']}';
+                $data = '{"data":[{' . $valueApiname . ':"' . $value . '"}],"trigger": ['.$wfTriger.']}';
                 $result = ZohoConnector::Requesting($url, $data, 'PUT');
                 if (isset($result)) {
                     return $result;

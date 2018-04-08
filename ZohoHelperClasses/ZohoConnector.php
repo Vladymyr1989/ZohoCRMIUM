@@ -19,7 +19,7 @@ class ZohoConnector
         if (isset($authtoken)) {
             $headers = array
             (
-                'Authorization: ' . $authtoken
+                'Authorization: '. $authtoken
             );
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
